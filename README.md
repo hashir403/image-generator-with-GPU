@@ -1,1 +1,2 @@
-# image-generator-with-GPU
+# image-generation
+image deneration with gpt
