@@ -1,0 +1,1619 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Image Generator - AI Image Generator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: linear-gradient(135deg, #1c0b2b, #07172f);
+      color: #fff;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    header {
+      background: linear-gradient(to right, #1c0b2b, #2c1d42, #07172f);
+      padding: 1.5rem 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+      position: sticky;
+      top: 0;
+      z-index: 999;
+    }
+
+    .logo {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.8rem;
+      color: #ffffff;
+      letter-spacing: 1px;
+      text-shadow: 0 0 8px rgba(255,255,255,0.15);
+    }
+
+    nav a {
+      margin: 0 1rem;
+      text-decoration: none;
+      color: #ccc;
+      font-weight: 500;
+      transition: 0.3s ease-in-out;
+    }
+
+    nav a:hover, nav a.active {
+      color: #fc2872;
+      text-shadow: 0 0 8px #fc2872;
+    }
+
+    .signup-btn {
+      background: linear-gradient(90deg, #fc2872, #8e44ec);
+      padding: 0.6rem 1.2rem;
+      border-radius: 30px;
+      color: #fff;
+      font-weight: bold;
+      border: none;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 10px rgba(252, 40, 114, 0.4);
+    }
+
+    .signup-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(252, 40, 114, 0.6);
+    }
+
+    .hero {
+      text-align: center;
+      padding: 5rem 5%;
+      background: linear-gradient(to bottom, #1c0b2b, #2e1346, #0f1a33);
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    .hero h1 {
+      font-size: 3.2rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      line-height: 1.3;
+    }
+
+    .highlight {
+      background: linear-gradient(90deg, #fc2872, #8e44ec);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      color: #c4c4c4;
+      max-width: 600px;
+      margin: 1rem auto;
+      font-size: 1.1rem;
+    }
+
+    .input-section {
+      margin-top: 2rem;
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .input-section input {
+      padding: 0.8rem 1rem;
+      width: 300px;
+      border: none;
+      border-radius: 25px;
+      font-size: 1rem;
+      background-color: #1e1e2f;
+      color: #fff;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    .input-section input::placeholder {
+      color: #aaa;
+    }
+
+    .input-section button {
+      background: linear-gradient(90deg, #fc2872, #8e44ec);
+      border: none;
+      border-radius: 25px;
+      padding: 0.8rem 1.5rem;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      box-shadow: 0 0 10px rgba(140, 60, 230, 0.5);
+      transition: transform 0.3s ease;
+    }
+
+    .input-section button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(140, 60, 230, 0.8);
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      padding: 3rem 5%;
+      background: linear-gradient(to top, #0f0f1c, #18182d);
+    }
+
+    .gallery img {
+      width: 100%;
+      height: 320px;
+      border-radius: 15px;
+      object-fit: cover;
+      transition: transform 0.3s ease, box-shadow 0.3s;
+      backdrop-filter: blur(6px);
+    }
+
+    .gallery img:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+    }
+
+    .gallery img:nth-child(even) {
+      transform: translateY(-10px);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+        footer {
+      text-align: center;
+      padding: 2rem 5%;
+      color: #888;
+      font-size: 0.9rem;
+      background: #0d0d1f;
+    }
+
+
+        .result-image {
+      display: block;
+      margin: 2rem auto;
+      max-width: 400px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(255,255,255,0.2);
+    }
+    .loading {
+      text-align: center;
+      margin-top: 2rem;
+    }
+    .error {
+      text-align: center;
+      color: #fc2872;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+
+    .input-form {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+
+
+
+.image-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 15px;
+}
+
+.image-card img {
+  display: block;
+  width: 100%;
+  height: 320px;
+  object-fit: cover;
+  border-radius: 15px;
+}
+
+
+
+.download-btn {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: #888; /* ✅ New background color */
+  padding: 8px;
+  border-radius: 50%;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.download-btn:hover {
+  background: #666; /* Slightly darker on hover (optional) */
+}
+
+.download-btn img {
+  width: 15px;
+  height: 15px;
+}
+
+.slider{
+    height: 250px;
+    margin: auto;
+    position: relative;
+    width: 90%;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+  
+}
+.slider::before,
+.slider::after{
+    background: linear-gradient(to right, rgba(255,255,255,1)0%, rgba(255,255,255,0) 100%);
+    content: ;
+    height: 100%;
+    position: absolute;
+    width: 15%;
+    z-index: 2;
+}
+.slider::before {
+    left: 0;
+    right: 0;
+}
+.slide-track{
+    display: flex;
+    width: calc(250px * 18);
+    animation: scroll 40s linear infinite;
+
+}
+.slide{
+    height: 200px;
+    width: 250px;
+    display: flex;
+    align-items: center;
+    padding: 150x;
+    perspective: 100px;
+}
+
+
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: #0e0a10;
+      color: #fff;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    header {
+      background:#5f026f ;
+      padding: 1.5rem 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+      position: sticky;
+      top: 0;
+      z-index: 999;
+    }
+
+    .logo {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.8rem;
+      color: #ffffff;
+      letter-spacing: 1px;
+      text-shadow: 0 0 8px rgba(255,255,255,0.15);
+    }
+
+    nav a {
+      margin: 0 1rem;
+      text-decoration: none;
+      color: #ccc;
+      font-weight: 500;
+      transition: 0.3s ease-in-out;
+    }
+
+    nav a:hover, nav a.active {
+      color: #fc2872;
+      text-shadow: 0 0 8px #fc2872;
+    }
+
+    .signup-btn {
+      background: linear-gradient(90deg, #fc2872, #8e44ec);
+      padding: 0.6rem 1.2rem;
+      border-radius: 30px;
+      color: #fff;
+      font-weight: bold;
+      border: none;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 10px rgba(252, 40, 114, 0.4);
+    }
+
+    .signup-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(252, 40, 114, 0.6);
+    }
+.slider{
+    height: 250px;
+    margin: auto;
+    position: relative;
+    width: 90%;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+  
+}
+.slide-track{
+    display: flex;
+    width: calc(250px * 18);
+    animation: scroll 40s linear infinite;
+
+}
+@keyframes scroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(calc(-250px * 9));
+    }
+}
+.slide{
+    height: 200px;
+    width: 250px;
+    display: flex;
+    align-items: center;
+    padding: 150x;
+    perspective: 100px;
+}
+img{
+    width: 100%;
+    height: 100%;
+}
+img:hover{
+    transform: translateZ(20px);
+}
+.slider::before,
+.slider::after{
+    background: linear-gradient(to right, rgba(255,255,255,1)0%, rgba(255,255,255,0) 100%);
+    content: ;
+    height: 100%;
+    position: absolute;
+    width: 15%;
+    z-index: 2;
+}
+.slider::before {
+    left: 0;
+    right: 0;
+}
+
+.text-to-image {
+  background-color: #120c1f;
+  padding: 100px 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.text-to-image-container {
+  display: flex;
+  align-items: center;
+  gap: 50px;
+  max-width: 1200px;
+  width: 100%;
+}
+.image-card {
+  position: relative;
+  width: 400px;
+  overflow: hidden;
+  border-radius: 20px;
+}
+
+.image-card img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.caption {
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(80, 80, 80, 0.8);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-size: 16px;
+}
+
+.text-content {
+  max-width: 500px;
+  color: white;
+}
+
+.progress-bar {
+  width: 150px;
+  height: 3px;
+  background: #333;
+  margin-bottom: 15px;
+  position: relative;
+}
+
+.progress-bar span {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 30%;
+  background: white;
+}
+
+.text-content h2 {
+  font-size: 36px;
+  margin-bottom: 15px;
+}
+
+.text-content p {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #ccc;
+  margin-bottom: 25px;
+}
+
+.generate-btn {
+  display: inline-block;
+  padding: 12px 25px;
+  background: white;
+  color: black;
+  font-weight: bold;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: background 0.3s;
+}
+
+.generate-btn:hover {
+  background: #ddd;
+}
+.pricing-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 50vh;
+    text-align: center;
+}
+.tag {
+    display: inline-block;
+    padding: 5px 15px;
+    border: 1px solid #333;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: #ccc;
+    letter-spacing: 2px;
+    margin-bottom: 15px;
+    background-color: #101010;
+}
+
+.pricing-header h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+.pricing-header h1 span {
+    font-weight: normal;
+    color: #aaa;
+}
+.toggle-buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 25px;
+}
+
+.btn {
+    background-color: #2c2c2c;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn.white {
+    background-color: white;
+    color: black;
+}
+
+.btn.active {
+    background-color: #3a3a3a;
+}
+
+.discount {
+    background-color: #8b0000;
+    color: white;
+    font-size: 0.7rem;
+    padding: 2px 5px;
+    border-radius: 10px;
+    position: absolute;
+    top: -10px;
+    right: -15px;
+}
+
+
+.pricing-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 50px;
+    flex-wrap: wrap;
+}
+
+.card {
+    background-color: #1c1c1c;
+    padding: 20px;
+    border-radius: 10px;
+    width: 250px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    border: 1px solid #333;
+    position: relative;
+}
+
+.card.highlight {
+    background-color: white;
+    color: black;
+    
+}
+
+.badge {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #aaa;
+    color: black;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+}
+
+h3 {
+    margin: 0;
+    font-size: 1.4rem;
+}
+
+.desc {
+    font-size: 0.9rem;
+    margin: 10px 0;
+    color: white;
+}
+
+.card.highlight .desc {
+    color: black;
+}
+
+.price {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.price span {
+    font-size: 0.9rem;
+    font-weight: normal;
+    color: #aaa;
+}
+
+.billing {
+    font-size: 0.8rem;
+    color: #aaa;
+}
+
+.credits {
+    font-size: 0.85rem;
+    margin: 10px 0;
+}
+
+.btn {
+    background-color: #2c2c2c;
+    color: white;
+    padding: 10px;
+    width: 100%;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin: 15px 0;
+}
+
+.card.highlight .btn {
+    background-color: white;
+    color: black;
+}
+
+ul {
+    padding-left: 0;
+    list-style: none;
+    font-size: 0.85rem;
+}
+
+li {
+    margin: 5px 0;
+}
+.discord-section {
+  background-color: #130537; /* Dark background */
+  padding: 100px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.discord-content {
+  display: flex;
+  align-items: center;
+  gap: 50px;
+  max-width: 1200px;
+  width: 100%;
+}
+
+.discord-left {
+  flex: 1;
+}
+
+.discord-right {
+  flex: 1;
+  color: white;
+}
+
+.discord-img {
+  width: 100%;
+  height: auto;
+  border-radius: 15px;
+}
+
+.discord-right h2 {
+  font-size: 36px;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.discord-right p {
+  font-size: 18px;
+  color: #ccc;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.discord-btn {
+  background: #7289da; /* Discord color */
+  color: white;
+  padding: 12px 25px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.discord-btn:hover {
+  background: #5e6cbf;
+}
+.testimonial-section {
+  background-color: #29023c;
+  padding: 80px 20px;
+  text-align: center;
+  color: white;
+}
+
+.testimonial-header {
+  margin-bottom: 40px;
+}
+
+.wall-of-love {
+  font-size: 14px;
+  color: #ff6347;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.testimonial-header h2 {
+  font-size: 36px;
+  font-weight: 700;
+  margin-top: 10px;
+}
+
+.testimonial-cards {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.testimonial-card {
+  background-color: #1c1c1c;
+  width: 300px;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  text-align: left;
+  color: white;
+}
+
+.testimonial-img {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 15px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.testimonial-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.testimonial-info {
+  padding-left: 10px;
+}
+
+.name-and-stars {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.testimonial-info h3 {
+  font-size: 18px;
+  margin: 0;
+  font-weight: 600;
+}
+
+.testimonial-info p {
+  font-size: 14px;
+  color: #ccc;
+  margin-bottom: 10px;
+}
+
+.stars {
+  display: flex;
+  justify-content: flex-start;
+  gap: 5px;
+}
+
+.star {
+  color: #ffcc00;  /* Yellow color for stars */
+  font-size: 20px;
+}
+    .hero {
+      text-align: center;
+      padding: 5rem 5%;
+      background: linear-gradient(to bottom, #1c0b2b, #2e1346, #0f1a33);
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    .hero h1 {
+      font-size: 3.2rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      line-height: 1.3;
+    }
+
+    .highlight {
+      background: linear-gradient(90deg, #fc2872, #8e44ec);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      color: #c4c4c4;
+      max-width: 600px;
+      margin: 1rem auto;
+      font-size: 1.1rem;
+    }
+
+    .input-section {
+      margin-top: 2rem;
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .input-section input {
+      padding: 0.8rem 1rem;
+      width: 300px;
+      border: none;
+      border-radius: 25px;
+      font-size: 1rem;
+      background-color: white;
+      color: black;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    .input-section input::placeholder {
+      color: black;
+    }
+
+    .input-section button {
+      background: linear-gradient(90deg, #fc2872, #8e44ec);
+      border: none;
+      border-radius: 25px;
+      padding: 0.8rem 1.5rem;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      box-shadow: 0 0 10px rgba(140, 60, 230, 0.5);
+      transition: transform 0.3s ease;
+    }
+
+    .input-section button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(140, 60, 230, 0.8);
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      padding: 3rem 5%;
+      background: linear-gradient(to top, #0f0f1c, #18182d);
+      padding-top: 500px;
+    }
+
+    .gallery img {
+      width: 100%;
+      height: 320px;
+      border-radius: 15px;
+      object-fit: cover;
+      transition: transform 0.3s ease, box-shadow 0.3s;
+      backdrop-filter: blur(6px);
+    }
+
+    .gallery img:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+    }
+
+    .gallery img:nth-child(even) {
+      transform: translateY(-10px);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+        footer {
+      text-align: center;
+      padding: 2rem 5%;
+      color: #888;
+      font-size: 0.9rem;
+      background: #0d0d1f;
+    }
+
+
+        .result-image {
+      display: block;
+      margin: 2rem auto;
+      max-width: 400px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(255,255,255,0.2);
+    }
+    .loading {
+      text-align: center;
+      margin-top: 2rem;
+    }
+    .error {
+      text-align: center;
+      color: #fc2872;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+
+    .input-form {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+
+
+
+.image-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 15px;
+}
+
+.image-card img {
+  display: block;
+  width: 100%;
+  height: 320px;
+  object-fit: cover;
+  border-radius: 15px;
+}
+
+
+
+.download-btn {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: #888; /* ✅ New background color */
+  padding: 8px;
+  border-radius: 50%;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.download-btn:hover {
+  background: #666; /* Slightly darker on hover (optional) */
+}
+
+.download-btn img {
+  width: 15px;
+  height: 15px;
+}
+
+
+
+
+
+
+
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #141414;
+}
+
+.footer {
+  background-color: #fff;
+  padding: 50px 20px;
+  color: #333;
+  border-top: 1px solid #ddd;
+}
+
+.footer-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.footer-logo {
+  flex: 1;
+  max-width: 200px;
+}
+
+.footer-logo img {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 10px;
+}
+
+.footer-logo p {
+  font-size: 14px;
+  color: #0f0f0f;
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  flex: 3;
+}
+
+.footer-column {
+  flex: 1;
+  min-width: 150px;
+  margin-bottom: 20px;
+}
+
+.footer-column h3 {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.footer-column ul {
+  list-style: none;
+}
+
+.footer-column ul li {
+  font-size: 14px;
+  color: #171616;
+  margin-bottom: 8px;
+}
+
+.footer-social {
+  display: flex;
+  gap: 15px;
+}
+
+.footer-social a {
+  width: 30px;
+  height: 30px;
+}
+
+.footer-social img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.footer-bottom {
+  text-align: center;
+  font-size: 14px;
+  color: #555;
+}
+
+.footer-bottom p {
+  margin-top: 20px;
+}
+
+
+
+
+  </style>
+</head>
+<body>
+
+  <!-- Page Loader -->
+<div id="pageLoader" style="
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0, 0, 0, 0.85);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+  flex-direction: column;
+">
+  <img src="{% static 'image_loading.gif' %}" alt="Loading..." style="width: 100px; height: 100px;" />
+  <p style="color: #fff; font-size: 1.1rem; margin-top: 1rem;">Generating image... Please wait</p>
+</div>
+
+
+  <header>
+    <div class="logo">AI Image Generator</div>
+    <nav>
+      <a href="{% url 'home' %}" class="active">Home</a>
+      <a href="{% url 'FAQ'  %}">Blog</a>
+      <a href="{% url 'feedback'  %}">Affiliate</a>  
+      <a href="{% url 'about'  %}">About</a>
+      <a href="{% url 'contact'  %}">Contact Us</a>
+      <a href="{% url 'history'  %}">History</a>
+    </nav>
+    <a href="{% url 'signup' %}" class="signup-btn">SIGN UP</a>
+  </header>
+
+
+  <!-- Background Grid -->
+
+  <div class="slider">
+    <div class="slide-track">
+        <div class="slide">
+           <img src="https://thefusioneer.com/wp-content/uploads/2023/11/5-AI-Advancements-to-Expect-in-the-Next-10-Years-scaled.jpeg">
+          </div>
+          <div class="slide"> 
+             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-nZe2pShSDeDXC_jxD7_rKF5w-0TQPUmj1Q&s"></div>
+          <div class="slide"> 
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRtyRqdQGas3pe--hzpW6ENLsJi4EmomJDxEA&s"></div>
+          <div class="slide"> 
+           <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYWrCpvYITEb12UoHhE9EasgWw095rZFiTLQ&s"></div>
+          <div class="slide">
+          <img src="https://harborresearch.com/wp-content/uploads/2023/06/Hurtling-Toward-Our-AI-Future.jpg"></div>
+        <div class="slide">
+           <img src="https://assets.everspringpartners.com/dims4/default/fb976e9/2147483647/strip/true/crop/686x360+171+0/resize/1200x630!/quality/90/?url=http%3A%2F%2Feverspring-brightspot.s3.us-east-1.amazonaws.com%2Fdf%2Fee%2F106592af4d508f76b29662e456db%2Fadvanced-ai.jpg"></div>
+        <div class="slide"> 
+          <img src="https://d3nwecxvwq3b5n.cloudfront.net/AcuCustom/Sitename/DAM/044/ai_and_telecomms.jpg"></div>
+        <div class="slide"> 
+          <img src="https://www.zmo.ai/wp-content/uploads/2023/11/64eda19f8e921f2d41659426-min.webp"></div>
+    </div>
+  </div>
+
+
+
+  <section class="hero">
+    <h1>Unleash Your Imagination<br> with <span class="highlight">AI Image Generator</span></h1>
+    <p>Transform your ideas into stunning visuals instantly with our cutting-edge AI technology.</p>
+    <div class="input-section">
+  <form action="" method="POST" class="input-form">
+    {% csrf_token %}
+    <input name="image_input" type="text" placeholder="Enter your idea..." />
+    <select name="image_count" style="padding: 0.8rem 1rem; border-radius: 25px; background-color: #1e1e2f; color: #fff; border: none; font-size: 1rem;">
+  <option value="1">1 Image</option>
+  <option value="2">2 Images</option>
+  <option value="3">3 Images</option>
+  <option value="4">4 Images</option>
+</select>
+    <button type="submit">✨ Generate</button>
+  </form>
+</div>
+
+  </section>
+
+
+  <div class="slider">
+    <div class="slide-track">
+        <div class="slide">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQU0JPpp6RLgZ61N9PDi963ryb424zMmI8e_A&s"/>
+        </div>
+        <div class="slide">
+            <img src="https://lumenor.ai/cdn-cgi/imagedelivery/F5KOmplEz0rStV2qDKhYag/cb02d3c4-5f9a-4455-64e9-916fac596f00/source"/>
+        </div>
+        <div class="slide">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREnFGKiLVq6YgLsRb9RXDwwKX2O3fhvfIObg&s"/>
+        </div>
+        <div class="slide">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZaKQUl9x5aZCEOPRhWwuBifvN_aklgRPSww&s"/>
+        </div>
+        <div class="slide">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQU_sN_8MFr0eew0QxLxa46OCoEjtCdNoD8zQ&s"/>
+        </div>
+        <div class="slide">
+            <img src="https://cdn-b0.goenhance.ai/static/site/088b8580-efeb-4c05-89e9-a812af2c7459.webp"/>
+        </div>
+        <div class="slide">
+            <img src="https://imgv3.fotor.com/images/share/wonderland-girl-generated-by-Fotor-ai-art-generator.jpg"/>
+        </div><div class="slide">
+            <img src="https://starryai.com/cdn-cgi/image/format=avif,quality=90/https://cdn.prod.website-files.com/61554cf1696635e97e823d26/67cc0c59b4503800d6cc7e9e_Importance%20of%20Understanding%20AI%20Art%20Styles%20for%20Creative%20Projects.webp"/>
+        </div>
+        <div class="slide">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRgW21hMGi6550AJ0vcdN3UIKE6EXfNkV7Seg&s"/>
+        </div>
+    </div>
+</div>
+<div class="slider">
+    <div class="slide-track">
+        <div class="slide">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTV7e_N2bN22m2fhaJyTMcyHL0VURs37J4Z6Q&s"/>
+        </div>
+        <div class="slide">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTkFlkDk60PpQ3MomrFiDHjFyuOSxBkt2u04A&s"/>
+        </div>
+        <div class="slide">
+            <img src="https://cdn.pixabay.com/photo/2023/10/14/16/46/ai-generated-8315326_1280.jpg"/>
+        </div>
+        <div class="slide">
+            <img src="https://statusneo.com/wp-content/uploads/2023/02/MicrosoftTeams-image551ad57e01403f080a9df51975ac40b6efba82553c323a742b42b1c71c1e45f1.jpg"/>
+        </div>
+        <div class="slide">
+            <img src="https://img.freepik.com/premium-photo/female-models-stunning-pose-high-fashion-magazine-cover_563241-4954.jpg"/>
+        </div>
+        <div class="slide">
+            <img src="https://p.potaufeu.asahi.com/1831-p/picture/27695628/89644a996fdd0cfc9e06398c64320fbe.jpg"/>
+        </div>
+        <div class="slide">
+            <img src="https://preview.redd.it/indian-monsoon-nostalgia-ai-generated-v0-g51y2twekbab1.jpg?width=640&crop=smart&auto=webp&s=742701d9e0e6137f4a3366ec4db709500ae2ccc6"/>
+        </div><div class="slide">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQFtvW389YFC8IpyggKasK4tillsS7fJ4HeHA&s"/>
+        </div>
+        <div class="slide">
+            <img src="https://newhorizons123.com/wp-content/uploads/2024/04/kids-looking-at-mobile-device-created-by-Bing.jpg"/>
+        </div>
+    </div>
+</div>
+<section class="pricing-section">
+        <div class="pricing-header">
+            <span class="tag">OUR PRICING</span>
+            <h1>Get Started with <br> <span>AI Image</span></h1>
+        </div>
+
+        <div class="toggle-buttons">
+            <button class="btn active">Monthly</button>
+            <button class="btn white">
+                Quarterly <span class="discount">15% OFF</span>
+            </button>
+            <button class="btn">
+                Yearly <span class="discount">30% OFF</span>
+            </button>
+        </div>
+    </section>
+<section class="pricing-container">
+        <div class="card">
+            <h3>Basic</h3>
+            <p class="desc">Essential tools for individual creators starting their AI journey.</p>
+            <p class="price">PKR 3,250 <span>/month</span></p>
+            <p class="billing">Billed quarterly</p>
+            <p class="credits">4.5K credits/quarter</p>
+            <button class="btn">Get Started</button>
+            <ul>
+                <li>✔ Up to ~900 Image Generations/3 months</li>
+                <li>✔ General Commercial Terms</li>
+                <li>✔ Image Generations Visibility: Public</li>
+                <li>✔ 4 concurrent Image Generations</li>
+                <li>✔ 1 concurrent image Generation</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h3>Standard</h3>
+            <p class="desc">Enhanced features for creators seeking more flexibility and support.</p>
+            <p class="price">PKR 6,964 <span>/month</span></p>
+            <p class="billing">Billed quarterly</p>
+            <p class="credits">15K credits/quarter</p>
+            <button class="btn">Get Started</button>
+            <ul>
+                <li>✔ Up to ~3000 Image Generations/3 months</li>
+                <li>✔ Up to ~375 image Generations/3 months</li>
+                <li>✔ General Commercial Terms</li>
+                <li>✔ Image Generation Visibility: Public</li>
+                <li>✔ 8 concurrent Image Generations</li>
+                <li>✔ 2 concurrent image Generations</li>
+            </ul>
+        </div>
+        <div class="card highlight">
+            <div class="badge">Best Value</div>
+            <h3>Professional</h3>
+            <p class="desc">Advanced tools and privacy for professionals maximizing productivity.</p>
+            <p class="price">PKR 13,928 <span>/month</span></p>
+            <p class="billing">Billed quarterly</p>
+            <p class="credits">45K credits/quarter</p>
+            <button class="btn">Get Started</button>
+            <ul>
+                <li>✔ Up to ~9000 Image Generations/3 months</li>
+                <li>✔ Up to ~1125 image Generations/3 months</li>
+                <li>✔ All styles and models</li>
+                <li>✔ General Commercial Terms</li>
+                <li>✔ Image Generation Visibility: Private</li>
+                <li>✔ 12 Concurrent Image Generations</li>
+                <li>✔ 3 concurrent image Generations</li>
+                <li>✔ Priority Support</li>
+                <li>✔ Higher priority in generation queue</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h3>Scale</h3>
+            <p class="desc">Unlimited access and top-tier tools for high-demand creators and teams.</p>
+            <p class="price">PKR 27,857 <span>/month</span></p>
+            <p class="billing">Billed quarterly</p>
+            <p class="credits">120K credits/quarter</p>
+            <button class="btn">Get Started</button>
+            <ul>
+                <li>✔ Unlimited Realtime Generations</li>
+                <li>✔ Up to ~24000 Image Generations/3 months</li>
+                <li>✔ Up to ~3000 image Generations/3 months</li>
+                <li>✔ All styles and models</li>
+                <li>✔ General Commercial Terms</li>
+                <li>✔ Image Generation Visibility: Private</li>
+                <li>✔ 16 Concurrent Image Generations</li>
+                <li>✔ 4 concurrent image Generations</li>
+                <li>✔ Priority Support</li>
+            </ul>
+        </div>
+    </section>
+    <section class="discord-section">
+      <div class="discord-content">
+        <div class="discord-left">
+           <img src="https://assets.science.nasa.gov/dynamicimage/assets/science/cds/eyes/common/promotion/Eyes_noText.png" alt="VR image" class="discord-img" />
+        </div>
+      <div class="discord-right">
+      <h2>Follow Us on Discord</h2>
+      <p>Connect and share innovative ideas with over 63K+ creative like-minded people</p>
+      <a href="#" class="discord-btn">Follow Now</a>
+    </div>
+  </div>
+</section>
+<section class="testimonial-section">
+  <div class="testimonial-header">
+    <span class="wall-of-love">WALL OF LOVE ❤️</span>
+    <h2>Join 1M+ users creating art using Imagine</h2>
+  </div>
+
+  <div class="testimonial-cards">
+    <div class="testimonial-card">
+      <div class="testimonial-img">
+       
+        <img src="https://m.media-amazon.com/images/M/MV5BM2EzZWE4Y2ItMjI2OC00ZTJiLTk0Y2UtYzZkY2VjYmU5N2RhXkEyXkFqcGc@._V1_.jpg" alt="Sarah Jones">
+        
+      </div>
+      <div class="stars">
+            <span class="star">&#9733;</span>
+            <span class="star">&#9733;</span>
+            <span class="star">&#9733;</span>
+            <span class="star">&#9733;</span>
+            <span class="star">&#9733;</span>
+          </div>
+      <div class="testimonial-info">
+        <div class="name-and-stars">
+          <h3>Sarah Jones</h3>
+          <p>Artist</p>
+          
+        </div>
+        <p>"ImagineArt is the best AI Image generator! I can brainstorm ideas and get stunning visuals in seconds. It helps me overcome creative block and explore new artistic directions."</p>
+      </div>
+    </div>
+
+    <div class="testimonial-card">
+      <div class="testimonial-img">
+        <img src="https://i.pinimg.com/236x/a7/04/f7/a704f7ea30514cf68c7b261efd1f1309.jpg"alt="David Lee" >
+      </div>
+      <div class="stars">
+            <span class="star">&#9733;</span>
+            <span class="star">&#9733;</span>
+            <span class="star">&#9733;</span>
+            <span class="star">&#9733;</span>
+            <span class="star">&#9733;</span>
+          </div>
+      <div class="testimonial-info">
+        <div class="name-and-stars">
+          <h3>David Lee</h3>
+          <p>Graphic Designer</p>
+         
+        </div>
+        <p>"I use ImagineArt to create mockups and concept art for clients. It saves me tons of time and allows for a wider range of creative exploration."</p>
+      </div>
+    </div>
+
+    <div class="testimonial-card">
+      <div class="testimonial-img">
+        <img src="https://www.bankofengland.co.uk/-/media/boe/images/people/sarah-john.jpg?h=515&iar=0&w=520&hash=C6CF3462C9B286AC1DBF5D991C81C31C" alt="Maria Garcia">
+        
+      </div>
+      <div class="stars">
+            <span class="star">&#9733;</span>
+            <span class="star">&#9733;</span>
+            <span class="star">&#9733;</span>
+            <span class="star">&#9733;</span>
+            <span class="star">&#9733;</span>
+          </div>
+      <div class="testimonial-info">
+        <div class="name-and-stars">
+          <h3>Maria Garcia</h3>
+          <p>Architect</p>
+          
+        </div>
+        <p>"ImagineArt has become an invaluable tool. Simply the best AI Image generator I have used."</p>
+      </div>
+    </div>
+
+
+
+
+<div class="testimonial-card">
+      <div class="testimonial-img">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQayRhbBDmo42_NKudzyQnUfiyJZJVZ44G9Mg&s" alt="Chloe Anderson">
+        
+      </div>
+      <div class="stars">
+            <span class="star">&#9733;</span>
+            <span class="star">&#9733;</span>
+            <span class="star">&#9733;</span>
+            <span class="star">&#9733;</span>
+            <span class="star">&#9733;</span>
+          </div>
+      <div class="testimonial-info">
+        <div class="name-and-stars">
+          <h3>Chloe Anderson</h3>
+          <p>Writer</p>
+          
+        </div>
+        <p>"ImagineArt is a dream come true for writers like me! It helps me visualize scenes and characters, bringing my stories to life in a whole new way."</p>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-img">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTt10FkzJi790-8IKHPWgZAa8hhHxm9mbKweg&s" alt="Liam Rivers">
+        
+      </div>
+      <div class="stars">
+            <span class="star">&#9733;</span>
+            <span class="star">&#9733;</span>
+            <span class="star">&#9733;</span>
+            <span class="star">&#9733;</span>
+            <span class="star">&#9733;</span>
+          </div>
+        
+      <div class="testimonial-info">
+        <div class="name-and-stars">
+          <h3>Liam Rivers</h3>
+          <p>Product Designer</p>
+          
+        </div>
+        <p>"ImagineArt has revolutionized my creative process, provide endless design inspirations and accelerate my design iterations."</p>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-img">
+        <img src="https://moritzlaw.osu.edu/sites/default/files/styles/person_main_image/public/2023-10/emily_main.png?itok=dAiYpgwY" alt="Emily Brown">
+        
+      </div>
+      <div class="stars">
+            <span class="star">&#9733;</span>
+            <span class="star">&#9733;</span>
+            <span class="star">&#9733;</span>
+            <span class="star">&#9733;</span>
+            <span class="star">&#9733;</span>
+          </div>
+      <div class="testimonial-info">
+        <div class="name-and-stars">
+          <h3>Emily Brown</h3>
+          <p>Marketing Specialist</p>
+          
+        </div>
+        <p>"ImagineArt is a fantastic AI generator for creating social media graphics and marketing materials. It helps me generate eye-catching visuals that resonate with our target audience."</p>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-img">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTXWtVra1byfCjY7xwE_9HC4BS8SW-vqGHvuQ&s" alt="Noah Miller">
+        
+      </div>
+      <div class="stars">
+            <span class="star">&#9733;</span>
+            <span class="star">&#9733;</span>
+            <span class="star">&#9733;</span>
+            <span class="star">&#9733;</span>
+            <span class="star">&#9733;</span>
+          </div>
+      <div class="testimonial-info">
+        <div class="name-and-stars">
+          <h3>Noah Miller</h3>
+          <p>Product Developer</p>
+          
+        </div>
+        <p>"We use ImagineArt to prototype product designs and user interfaces. It allows us to quickly iterate and test different concepts before investing time and resources into physical prototypes."</p>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-img">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5yyAZTQqTzX_FtrCl6WjmI57C31cYROwTzQ&s" alt="Aisha Patel">
+        
+      </div>
+      <div class="stars">
+            <span class="star">&#9733;</span>
+            <span class="star">&#9733;</span>
+            <span class="star">&#9733;</span>
+            <span class="star">&#9733;</span>
+            <span class="star">&#9733;</span>
+          </div>
+      <div class="testimonial-info">
+        <div class="name-and-stars">
+          <h3>Aisha Patel</h3>
+          <p>Blogger</p>
+          
+        </div>
+        <p>"ImagineArt helps me create captivating visuals for my blog posts. It allows me to illustrate concepts and ideas in a way that keeps my readers engaged."</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+
+
+
+  {% if loading %}
+    <p style="text-align:center; color:#ff0000;">⚠️ Network issue or unsupported input. Try a different prompt.</p>
+  {% endif %} 
+</section>
+
+
+  
+
+  <footer class="footer">
+  <div class="footer-content">
+    <div class="footer-logo">
+      <img src="https://www.shutterstock.com/image-vector/ai-generate-logo-artificial-intelligence-260nw-2519534733.jpg" alt="AI Image Logo" />
+      <p><b> AI Image</b></p>
+    </div>
+    <div class="footer-links">
+      <div class="footer-column">
+        <h3>Features</h3>
+        <ul>
+          <li>AI Video Generator</li>
+          <li>AI Image Generator</li>
+          <li>AI Music Generator</li>
+          <li>AI Avatar Generator</li>
+          <li>AI Shorts Generator</li>
+          <li>AI Voice Generator</li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h3>Tools</h3>
+        <ul>
+          <li>BG Remover</li>
+          <li>Ideate Studio</li>
+          <li>Text to Video AI</li>
+          <li>Image to Video AI</li>
+          <li>AI Logo Generator</li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h3>Company</h3>
+        <ul>
+          <li>API</li>
+          <li>Affiliate Program</li>
+          <li>Contact Us</li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h3>AI Image</h3>
+        <ul>
+          <li>Blogs</li>
+          <li>Community</li>
+          <li>Our Tools</li>
+          <li>Mobile App</li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h3>Legal</h3>
+        <ul>
+          <li>Privacy Policy</li>
+          <li>Terms & Conditions</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-social">
+      <a href="#"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSF59o68iuZQepBGlrnOIyhEKAgsfGkrGACPg&s" alt="Facebook" /></a>
+      <a href="#"><img src="https://static.vecteezy.com/system/resources/previews/042/387/654/non_2x/instagram-button-icon-set-instagram-screen-social-media-and-social-network-interface-template-stories-user-button-symbol-sign-logo-stories-liked-editorial-free-png.png" alt="Instagram" /></a>
+      <a href="#"><img src="https://redditinc.com/hs-fs/hubfs/Reddit%20Inc/Content/Brand%20Page/Reddit_Logo.png" alt="Reddit" /></a>
+      <a href="#"><img src="https://static.vecteezy.com/system/resources/previews/019/493/250/non_2x/discord-logo-discord-icon-discord-symbol-free-free-vector.jpg" alt="Discord" /></a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2025 Vyro AI. All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+  const form = document.querySelector('.input-form');
+  const pageLoader = document.getElementById('pageLoader');
+
+  form?.addEventListener('submit', function (e) {
+    e.preventDefault(); // 🚫 Stop immediate submission
+    if (pageLoader) {
+      pageLoader.style.display = 'flex'; // ✅ Show loader
+    }
+
+    // ✅ Wait 1 second to show loader properly, then submit form
+    setTimeout(() => {
+      form.submit();
+    }, 10000); // show loader for 1 second before submitting
+  });
+</script>
+
+
+</body>
+</html>
